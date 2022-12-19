@@ -109,5 +109,3 @@ jobs:
         run: | 
           go test -v -covermode=atomic -coverprofile=coverage.tx ./...
           go tool cover -func=coverage.tx -o=coverage.out
-        with:
-          filename: coverage.out
