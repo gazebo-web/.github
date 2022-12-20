@@ -1,0 +1,10 @@
+{
+  "name": "Gazebo Workflow for Go Projects",
+  "description": "CI starter workflow for the Go programming language",
+  "categories": [
+    "Go"
+  ],
+  "filePatterns": [
+    "go.mod"
+  ]
+}
