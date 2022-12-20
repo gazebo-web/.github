@@ -8,7 +8,7 @@ on:
         required: false
         type: string
       database:
-        description: 'The database driver that should be used when testing. Available options: "mysql"'
+        description: 'The database driver that should be used when testing. Available options: "none", "mysql"'
         default: 'none'
         required: false
         type: string
@@ -19,6 +19,19 @@ on:
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
+
+services:
+  mysql: &mysql
+    image: mysql:5.7
+    ports:
+      - 3306
+    env:
+      MYSQL_USER: gazebo
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: gazebo_db
+      MYSQL_ROOT_PASSWORD: 1234
+    options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+
 
 jobs:
   fmt:
@@ -69,9 +82,22 @@ jobs:
   test:
     needs: vet
     runs-on: ubuntu-latest
+    services:
+      <<: *mysql
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Verify MySQL connection
+        if: ${{ inputs.database == 'mysql' }}
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done          
+
 
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -84,10 +110,21 @@ jobs:
   race:
     needs: vet
     runs-on: ubuntu-latest
+    services:
+      <<: *mysql
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Verify MySQL connection
+        if: ${{ inputs.database == 'mysql' }}
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
@@ -99,9 +136,21 @@ jobs:
   coverage:
     needs: vet
     runs-on: ubuntu-latest
+    services:
+      <<: *mysql
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Verify MySQL connection
+        if: ${{ inputs.database == 'mysql' }}
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done          
 
       - name: Set up Go
         uses: actions/setup-go@v3
