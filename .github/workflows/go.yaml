@@ -1,8 +1,24 @@
-name: Gazebo Go
+name: Go workflow
 on:
+  workflow_call:
+    inputs:
+      go-version:
+        description: 'The version of Go used when running this workflow'
+        default: '1.19'
+        required: false
+        type: string
+      database:
+        description: 'The database driver that should be used when testing. Available options: "none", "mysql"'
+        default: 'none'
+        required: false
+        type: string
   push:
     branches: [ $default-branch ]
   pull_request:
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
   fmt:
@@ -14,7 +30,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: ${{ inputs.go-version }}
           cache: true
 
       - name: go fmt
@@ -34,6 +50,7 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
           version: latest
   vet:
     runs-on: ubuntu-latest
@@ -44,7 +61,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: ${{ inputs.go-version }}
           cache: true
 
       - name: go vet
@@ -76,10 +93,11 @@ jobs:
             sleep 1
           done          
 
+
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: ${{ inputs.go-version }}
           cache: true
 
       - name: Test
