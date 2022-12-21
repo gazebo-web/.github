@@ -8,7 +8,8 @@ on:
     branches: 
       - 'main'
       - 'master'
-    tags: []
+    tags:
+      - '*'
 
 env:
   REGISTRY: ghcr.io
