@@ -6,8 +6,7 @@ name: Build a Docker image and publish it to the Github registry.
 on:
   push:
     branches: 
-      - 'main'
-      - 'master'
+      - '$default-branch'
     tags:
       - '*'
 
