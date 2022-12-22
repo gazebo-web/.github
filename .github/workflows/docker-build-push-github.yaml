@@ -1,14 +1,19 @@
-# This job builds a docker image and pushes it to Github's registry whenever there is a push to main/master.
+# This job builds a docker image and pushes it to Github's registry whenever a push to main/master occurs or tags are created.
 # Based on https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
 
-name: Build a Docker image and publish it to the Github registry.
+name: Build Docker image and publish it to the Github registry.
 
 on:
   push:
     branches: 
-      - '$default-branch'
+      - 'main'
+      - 'master'
     tags:
       - '*'
+  # This entry allows calling this workflow from other workflows
+  workflow_call:
+  # This entry allows running this workflow manually
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
