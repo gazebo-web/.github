@@ -1,15 +1,10 @@
-# This job builds a docker image and pushes it to Github's registry whenever a push to main/master occurs or tags are created.
+# This job builds a docker image and pushes it to Github's registry.
+# It is intended to be called from other workflows or triggered manually.
 # Based on https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
 
 name: Build Docker image and publish it to the Github registry.
 
 on:
-  push:
-    branches: 
-      - 'main'
-      - 'master'
-    tags:
-      - '*'
   # This entry allows calling this workflow from other workflows
   workflow_call:
   # This entry allows running this workflow manually
@@ -18,7 +13,9 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
+  # github.head_ref is only populated if this is run for a pull_request
+  IMAGE_BRANCH: ${{ github.head_ref || github.ref_name }} 
+ 
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -41,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ !(contains(env.IMAGE_BRANCH, "master") || contains(env.IMAGE_BRANCH, "main")) && ":" + env.IMAGE_BRANCH }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
