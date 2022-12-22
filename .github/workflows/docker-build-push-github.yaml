@@ -38,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ !contains(['main', 'master'], env.IMAGE_BRANCH) && ":" + env.IMAGE_BRANCH }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ !contains('main', env.IMAGE_BRANCH) && !contains('master', env.IMAGE_BRANCH) && ':' + env.IMAGE_BRANCH || '' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
