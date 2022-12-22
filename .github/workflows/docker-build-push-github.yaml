@@ -2,7 +2,7 @@
 # It is intended to be called from other workflows or triggered manually.
 # Based on https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
 
-name: Build Docker image and publish it to the Github registry.
+name: Package OCI
 
 on:
   # This entry allows calling this workflow from other workflows
