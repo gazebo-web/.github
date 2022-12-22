@@ -32,7 +32,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           
-      - run: "echo REGISTRY: ${{ env.REGISTRY }}\nIMAGE_NAME: ${{ env.IMAGE_NAME }}"
+      - name: Inspect env vars
+        run: "echo REGISTRY: ${{ env.REGISTRY }}\nIMAGE_NAME: ${{ env.IMAGE_NAME }}"
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
