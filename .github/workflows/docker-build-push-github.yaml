@@ -13,8 +13,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  # github.head_ref is only populated if this is run for a pull_request
-  IMAGE_BRANCH: ${{ github.head_ref || github.ref_name }} 
  
 jobs:
   build-and-push-image:
@@ -38,7 +36,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ !contains('main', env.IMAGE_BRANCH) && !contains('master', env.IMAGE_BRANCH) && format(':{0}', env.IMAGE_BRANCH) || '' }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
