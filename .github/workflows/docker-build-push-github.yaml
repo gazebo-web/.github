@@ -32,7 +32,7 @@ jobs:
     
       - name: Modify env var
         run: |
-          IMAGE_TAG=$(echo $IMAGE_TAG | sed s@/@-@)
+          echo "$(echo $IMAGE_TAG | sed s@/@-@)" >> $GITHUB_ENV
     
       - name: Display modified env vars
         run: |
