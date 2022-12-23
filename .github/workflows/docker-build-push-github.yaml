@@ -24,7 +24,8 @@ jobs:
       packages: write
 
     steps:
-      - run: echo "$default-branch"
+      - run: echo "default-branch $default-branch"
+      - run: echo "github.event.repository.default_branch ${{ github.event.repository.default_branch }}"
 #       - name: Modify env var
 #         run: |
 #           if [ "${IMAGE_TAG}" == "main" ] || [ "${IMAGE_TAG}" == "master" ]
