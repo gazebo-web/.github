@@ -28,7 +28,7 @@ jobs:
         run: |
           if [ "${IMAGE_TAG}" == "${{ github.event.repository.default_branch }}" ]
           then
-            IMAGE_TAG=''
+            IMAGE_TAG='latest'
           else
             # When building for a feature branch, slashes are converted to dashes
             # as slashes are not allowed in OCI image names.
