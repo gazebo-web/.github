@@ -42,7 +42,7 @@ jobs:
             # use latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
             # use branch name for feature branches
-            type=ref,event=branch,enable={{!is_default_branch}}
+            type=ref,event=branch,enable={{not is_default_branch}}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
