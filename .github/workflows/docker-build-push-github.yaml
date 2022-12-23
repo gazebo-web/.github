@@ -24,10 +24,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Set image tag to latest
-        if: github.event.repository.default_branch == env.IMAGE_TAG
-        run: echo "IMAGE_TAG=latest" #>> $GITHUB_ENV
-        
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -42,6 +38,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          tags: |
+            # use latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+            # use branch name for feature branches
+            type=ref,event=branch,enable={{!is_default_branch}}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
