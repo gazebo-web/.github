@@ -24,21 +24,17 @@ jobs:
       packages: write
 
     steps:
-      - name: Display env vars
-        run: |
-          echo "REGISTRY: ${{ env.REGISTRY }}"
-          echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
-          echo "IMAGE_TAG: ${{ env.IMAGE_TAG }}"
-    
       - name: Modify env var
         run: |
-          echo "IMAGE_TAG=$(echo $IMAGE_TAG | sed s@/@-@)" >> $GITHUB_ENV
-    
-      - name: Display modified env vars
-        run: |
-          echo "REGISTRY: ${{ env.REGISTRY }}"
-          echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
-          echo "IMAGE_TAG: ${{ env.IMAGE_TAG }}"
+          if [ "${IMAGE_TAG}" == "main" ] || [ "${IMAGE_TAG}" == "master" ]
+          then
+            IMAGE_TAG=''
+          else
+            # When building for a feature branch, slashes are converted to dashes
+            # as slashes are not allowed in OCI image names.
+            IMAGE_TAG=$(echo ${IMAGE_TAG} | sed s@/@-@)
+          fi
+          echo "IMAGE_TAG=$IMAGE_TAG" #>> $GITHUB_ENV
         
       - name: Checkout repository
         uses: actions/checkout@v3
