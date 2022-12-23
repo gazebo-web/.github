@@ -24,38 +24,39 @@ jobs:
       packages: write
 
     steps:
-      - name: Modify env var
-        run: |
-          if [ "${IMAGE_TAG}" == "main" ] || [ "${IMAGE_TAG}" == "master" ]
-          then
-            IMAGE_TAG=''
-          else
-            # When building for a feature branch, slashes are converted to dashes
-            # as slashes are not allowed in OCI image names.
-            IMAGE_TAG=$(echo ${IMAGE_TAG} | sed s@/@-@)
-          fi
-          echo "IMAGE_TAG=$IMAGE_TAG" #>> $GITHUB_ENV
+      - run: echo "$default-branch"
+#       - name: Modify env var
+#         run: |
+#           if [ "${IMAGE_TAG}" == "main" ] || [ "${IMAGE_TAG}" == "master" ]
+#           then
+#             IMAGE_TAG=''
+#           else
+#             # When building for a feature branch, slashes are converted to dashes
+#             # as slashes are not allowed in OCI image names.
+#             IMAGE_TAG=$(echo ${IMAGE_TAG} | sed s@/@-@)
+#           fi
+#           echo "IMAGE_TAG=$IMAGE_TAG" #>> $GITHUB_ENV
         
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Log in to the Container registry
+#         uses: docker/login-action@v2
+#         with:
+#           registry: ${{ env.REGISTRY }}
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#       - name: Extract metadata (tags, labels) for Docker
+#         id: meta
+#         uses: docker/metadata-action@v4
+#         with:
+#           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+#       - name: Build and push Docker image
+#         uses: docker/build-push-action@v3
+#         with:
+#           context: .
+#           push: true
+#           tags: ${{ steps.meta.outputs.tags }}
+#           labels: ${{ steps.meta.outputs.labels }}
