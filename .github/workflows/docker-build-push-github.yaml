@@ -8,12 +8,12 @@ on:
   # This entry allows calling this workflow from other workflows
   workflow_call:
     inputs:
-      docker-build-context:
-        description: 'Build context is the PATH or URL to build from. '
+      docker-context:
+        description: 'PATH or URL to build from, starting at the project root.'
         type: string
         default: .
       docker-filepath:
-        description: 'Path of Dockerfile to build. This is relative to the `docker-build-context` input.'
+        description: 'Path of Dockerfile to build. This is relative to the `docker-context` input.'
         type: string
         default: Dockerfile
   # This entry allows running this workflow manually
@@ -59,8 +59,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: ${{ inputs.docker-build-context }}
-          file: ${{ inputs.docker-filepath }}
+          context: ${{ inputs.docker-context }}
+          file: ${{ inputs.docker-context }}/${{ inputs.docker-filepath }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
