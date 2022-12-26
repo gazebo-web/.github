@@ -7,6 +7,15 @@ name: Package OCI
 on:
   # This entry allows calling this workflow from other workflows
   workflow_call:
+    inputs:
+      docker-build-context:
+        description: 'Build context is the PATH or URL to build from. '
+        type: string
+        default: .
+      docker-filepath:
+        description: 'Path of Dockerfile to build. This is relative to the `docker-build-context` input.'
+        type: string
+        default: Dockerfile
   # This entry allows running this workflow manually
   workflow_dispatch:
 
@@ -42,7 +51,7 @@ jobs:
             # use latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
             # generate images for non-default branches using branch name
-            type=ref,event=branch#,enable=${{ env.IMAGE_TAG != github.event.repository.default_branch }}
+            type=ref,event=branch,enable=${{ env.IMAGE_TAG != github.event.repository.default_branch }}
             # generate images for tags
             type=ref,event=tag
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
@@ -50,7 +59,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ${{ inputs.docker-build-context }}
+          file: ${{ inputs.docker-filepath }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
