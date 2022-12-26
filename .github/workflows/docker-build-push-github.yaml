@@ -42,7 +42,7 @@ jobs:
             # use latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
             # generate images for non-default branches using branch name
-            type=ref,event=branch,enable=${{ env.IMAGE_TAG != github.event.repository.default_branch }}
+            type=ref,event=branch#,enable=${{ env.IMAGE_TAG != github.event.repository.default_branch }}
             # generate images for tags
             type=ref,event=tag
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
