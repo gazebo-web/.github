@@ -12,7 +12,7 @@ on:
         required: false
         type: string
     secrets:
-      private-key:
+      ssh-key:
         description: "The private key used for downloading the private repositories specified in GOPRIVATE"
         required: false
 jobs:
