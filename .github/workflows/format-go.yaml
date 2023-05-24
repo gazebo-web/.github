@@ -7,13 +7,35 @@ on:
         default: '1.19'
         required: false
         type: string
+      go-private:
+        description: |
+          The GOPRIVATE environment variable value. Must be set alongside secrets.ssh-key
+        required: false
+        type: string
+    secrets:
+      ssh-key:
+        description: |
+          The SSH key used for downloading the private repositories specified in GOPRIVATE. 
+          Must be set alongside inputs.go-private
+        required: false
 
 jobs:
   fmt:
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ inputs.go-private }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure SSH private key
+        uses: "webfactory/ssh-agent@v0.7.0"
+        if: "${{ inputs.go-private }}"
+        with:
+          ssh-private-key: "${{ secrets.ssh-key }}"
+
+      - name: Configure git for private modules
+        run: git config --global --add url."git@github.com:".insteadOf "https://github.com/"
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -25,9 +47,20 @@ jobs:
         run: go fmt ./...
   lint:
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ inputs.go-private }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure SSH private key
+        uses: "webfactory/ssh-agent@v0.7.0"
+        if: "${{ inputs.go-private }}"
+        with:
+          ssh-private-key: "${{ secrets.ssh-key }}"
+
+      - name: Configure git for private modules
+        run: git config --global --add url."git@github.com:".insteadOf "https://github.com/"
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -42,9 +75,20 @@ jobs:
           args: --timeout=3m
   vet:
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ inputs.go-private }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure SSH private key
+        uses: "webfactory/ssh-agent@v0.7.0"
+        if: "${{ inputs.go-private }}"
+        with:
+          ssh-private-key: "${{ secrets.ssh-key }}"
+
+      - name: Configure git for private modules
+        run: git config --global --add url."git@github.com:".insteadOf "https://github.com/"
 
       - name: Set up Go
         uses: actions/setup-go@v4
