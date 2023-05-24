@@ -7,13 +7,28 @@ on:
         default: '1.19'
         required: false
         type: string
-
+      go-private:
+        description: 'The GOPRIVATE environment variable value'
+        required: false
+        type: string
+    secrets:
+      private-key:
+        description: "The private key used for downloading the private repositories specified in GOPRIVATE"
+        required: false
 jobs:
   fmt:
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ inputs.go-private }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure SSH private key
+        uses: "webfactory/ssh-agent@v0.7.0"
+        if: ${{ secrets.private-key }}
+        with:
+          ssh-private-key: ${{ secrets.private-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -25,9 +40,17 @@ jobs:
         run: go fmt ./...
   lint:
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ inputs.go-private }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure SSH private key
+        uses: "webfactory/ssh-agent@v0.7.0"
+        if: ${{ secrets.private-key }}
+        with:
+          ssh-private-key: ${{ secrets.private-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -42,9 +65,17 @@ jobs:
           args: --timeout=3m
   vet:
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ inputs.go-private }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure SSH private key
+        uses: "webfactory/ssh-agent@v0.7.0"
+        if: ${{ secrets.private-key }}
+        with:
+          ssh-private-key: ${{ secrets.private-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v3
