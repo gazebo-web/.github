@@ -8,12 +8,15 @@ on:
         required: false
         type: string
       go-private:
-        description: 'The GOPRIVATE environment variable value'
+        description: |
+          The GOPRIVATE environment variable value. Must be set alongside secrets.ssh-key
         required: false
         type: string
     secrets:
       ssh-key:
-        description: "The SSH key used for downloading the private repositories specified in GOPRIVATE"
+        description: |
+          The SSH key used for downloading the private repositories specified in GOPRIVATE. 
+          Must be set alongside inputs.go-private
         required: false
 
 jobs:
@@ -27,7 +30,7 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: "${{ secrets.ssh-key }}"
+        if: "${{ inputs.go-private }}"
         with:
           ssh-private-key: "${{ secrets.ssh-key }}"
 
@@ -49,7 +52,7 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: "${{ secrets.ssh-key }}"
+        if: "${{ inputs.go-private }}"
         with:
           ssh-private-key: "${{ secrets.ssh-key }}"
 
@@ -74,7 +77,7 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: "${{ secrets.ssh-key }}"
+        if: "${{ inputs.go-private }}"
         with:
           ssh-private-key: "${{ secrets.ssh-key }}"
 
