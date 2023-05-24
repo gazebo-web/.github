@@ -11,10 +11,11 @@ on:
         description: 'The GOPRIVATE environment variable value'
         required: false
         type: string
+    secrets:
       ssh-key:
         description: "The SSH key used for downloading the private repositories specified in GOPRIVATE"
         required: false
-        type: string
+
 jobs:
   fmt:
     runs-on: ubuntu-latest
@@ -26,9 +27,9 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: ${{ inputs.ssh-key }}
+        if: ${{ secrets.ssh-key }}
         with:
-          ssh-private-key: ${{ inputs.ssh-key }}
+          ssh-private-key: ${{ secrets.ssh-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -48,9 +49,9 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: ${{ inputs.ssh-key }}
+        if: ${{ secrets.ssh-key }}
         with:
-          ssh-private-key: ${{ inputs.ssh-key }}
+          ssh-private-key: ${{ secrets.ssh-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -73,9 +74,9 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: ${{ inputs.ssh-key }}
+        if: ${{ secrets.ssh-key }}
         with:
-          ssh-private-key: ${{ inputs.ssh-key }}
+          ssh-private-key: ${{ secrets.ssh-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v4
