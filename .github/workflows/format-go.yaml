@@ -27,9 +27,9 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: ${{ secrets.ssh-key }}
+        if: ${{ secrets.ssh-key }}"
         with:
-          ssh-private-key: ${{ secrets.ssh-key }}
+          ssh-private-key: "${{ secrets.ssh-key }}"
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -49,9 +49,9 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: ${{ secrets.ssh-key }}
+        if: "${{ secrets.ssh-key }}"
         with:
-          ssh-private-key: ${{ secrets.ssh-key }}
+          ssh-private-key: "${{ secrets.ssh-key }}"
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -74,9 +74,9 @@ jobs:
 
       - name: Configure SSH private key
         uses: "webfactory/ssh-agent@v0.7.0"
-        if: ${{ secrets.ssh-key }}
+        if: "${{ secrets.ssh-key }}"
         with:
-          ssh-private-key: ${{ secrets.ssh-key }}
+          ssh-private-key: "${{ secrets.ssh-key }}"
 
       - name: Set up Go
         uses: actions/setup-go@v4
