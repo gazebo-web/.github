@@ -1,0 +1,66 @@
+# This job builds a docker image and pushes it to Github's registry.
+# It is intended to be called from other workflows or triggered manually.
+# Based on https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
+
+name: Package OCI
+
+on:
+  # This entry allows calling this workflow from other workflows
+  workflow_call:
+    inputs:
+      docker-context:
+        description: 'PATH or URL to build from, starting at the project root.'
+        type: string
+        default: .
+      docker-filepath:
+        description: 'Path of Dockerfile to build. This is relative to the `docker-context` input.'
+        type: string
+        default: Dockerfile
+  # This entry allows running this workflow manually
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  # github.head_ref is only populated if this is run for a pull_request
+  IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
+ 
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          tags: |
+            # use latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+            # generate images for non-default branches using branch name
+            type=ref,event=branch,enable=${{ env.IMAGE_TAG != github.event.repository.default_branch }}
+            # generate images for tags
+            type=ref,event=tag
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ inputs.docker-context }}
+          file: ${{ inputs.docker-context }}/${{ inputs.docker-filepath }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
