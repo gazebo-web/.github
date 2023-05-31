@@ -1,0 +1,10 @@
+{
+  "name": "Gazebo Test Workflow for Go Projects",
+  "description": "Test Go projects with a MySQL database",
+  "categories": [
+    "Go"
+  ],
+  "filePatterns": [
+    "go.mod"
+  ]
+}
